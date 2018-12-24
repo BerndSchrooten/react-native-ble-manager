@@ -37,7 +37,6 @@ import static android.app.Activity.RESULT_OK;
 import static android.bluetooth.BluetoothProfile.GATT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 
-
 class BleManager extends ReactContextBaseJavaModule implements ActivityEventListener {
 
 	public static final String LOG_TAG = "ReactNativeBleManager";
@@ -65,7 +64,6 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 	// key is the MAC Address
 	private final Map<String, Peripheral> peripherals = new LinkedHashMap<>();
 	// scan session id
-
 
 	public BleManager(ReactApplicationContext reactContext) {
 		super(reactContext);
@@ -95,11 +93,8 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 		return bluetoothManager;
 	}
 
-	public void sendEvent(String eventName,
-						  @Nullable WritableMap params) {
-		getReactApplicationContext()
-				.getJSModule(RCTNativeAppEventEmitter.class)
-				.emit(eventName, params);
+	public void sendEvent(String eventName, @Nullable WritableMap params) {
+		getReactApplicationContext().getJSModule(RCTNativeAppEventEmitter.class).emit(eventName, params);
 	}
 
 	@ReactMethod
@@ -142,12 +137,28 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 				callback.invoke("Current activity not available");
 			else
 				getCurrentActivity().startActivityForResult(intentEnable, ENABLE_REQUEST);
+			callback.invoke();
 		} else
 			callback.invoke();
 	}
 
 	@ReactMethod
-	public void scan(ReadableArray serviceUUIDs, final int scanSeconds, boolean allowDuplicates, ReadableMap options, Callback callback) {
+	public void enableBluetoothAsAdmin(Callback callback) {
+		if (getBluetoothAdapter() == null) {
+			Log.d(LOG_TAG, "No bluetooth support");
+			callback.invoke("No bluetooth support");
+			return;
+		}
+		if (!getBluetoothAdapter().isEnabled()) {
+			getBluetoothAdapter().enable();
+			callback.invoke();
+		} else
+			callback.invoke();
+	}
+
+	@ReactMethod
+	public void scan(ReadableArray serviceUUIDs, final int scanSeconds, boolean allowDuplicates, ReadableMap options,
+			Callback callback) {
 		Log.d(LOG_TAG, "scan");
 		if (getBluetoothAdapter() == null) {
 			Log.d(LOG_TAG, "No bluetooth support");
@@ -159,7 +170,7 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 		}
 
 		synchronized (peripherals) {
-			for (Iterator<Map.Entry<String, Peripheral>> iterator = peripherals.entrySet().iterator(); iterator.hasNext(); ) {
+			for (Iterator<Map.Entry<String, Peripheral>> iterator = peripherals.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry<String, Peripheral> entry = iterator.next();
 				if (!entry.getValue().isConnected()) {
 					iterator.remove();
@@ -167,7 +178,8 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 			}
 		}
 
-		if (scanManager != null) scanManager.scan(serviceUUIDs, scanSeconds, options, callback);
+		if (scanManager != null)
+			scanManager.scan(serviceUUIDs, scanSeconds, options, callback);
 	}
 
 	@ReactMethod
@@ -182,7 +194,8 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 			callback.invoke();
 			return;
 		}
-		if (scanManager != null) scanManager.stopScan(callback);
+		if (scanManager != null)
+			scanManager.stopScan(callback);
 	}
 
 	@ReactMethod
@@ -278,7 +291,6 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 			callback.invoke("Peripheral not found");
 	}
 
-
 	@ReactMethod
 	public void write(String deviceUUID, String serviceUUID, String characteristicUUID, ReadableArray message, Integer maxByteSize, Callback callback) {
 		Log.d(LOG_TAG, "Write to: " + deviceUUID);
@@ -331,7 +343,6 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 			callback.invoke("Peripheral not found", null);
 	}
 
-
 	@ReactMethod
 	public void refreshCache(String deviceUUID, Callback callback) {
 		Log.d(LOG_TAG, "Refershing cache for: " + deviceUUID);
@@ -351,7 +362,6 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 		} else
 			callback.invoke("Peripheral not found", null);
 	}
-
 
 	private Peripheral savePeripheral(BluetoothDevice device) {
 		String address = device.getAddress();
@@ -423,8 +433,7 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 			final String action = intent.getAction();
 
 			if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-				final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
-						BluetoothAdapter.ERROR);
+				final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
 				String stringState = "";
 
 				switch (state) {
