@@ -261,6 +261,23 @@ BleManager.enableBluetooth()
   });
 ```
 
+### enableBluetoothAsAdmin() [Android only]
+Enable bluetooth without prompting the user. Requires the `BLUETOOTH_ADMIN` permission. This initiates the enabling of bluetooth. One should listen to the change in bluetooth state to know when the bluetooth is turned on by the OS.
+Returns a `Promise` object.
+
+__Examples__
+```js
+BleManager.enableBluetoothAsAdmin()
+  .then(() => {
+    // Success code
+    console.log('The bluetooth is being enabled');
+  })
+  .catch((error) => {
+    // Failure code
+    console.log('Something went wrong while enabling the bluetooth as admin. Do you have the BLUETOOTH_ADMIN permission?');
+  });
+```
+
 ### checkState()
 Force the module to check the state of BLE and trigger a BleManagerDidUpdateState event.
 
@@ -386,7 +403,7 @@ __Example__
 BleManager.writeWithoutResponse('XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX', 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX', 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX', data)
   .then(() => {
     // Success code
-    console.log('Writed: ' + data);
+    console.log('Written: ' + data);
   })
   .catch((error) => {
     // Failure code
@@ -552,7 +569,7 @@ Returns a `Promise` object.
 
 __Examples__
 ```js
-BleManager.getBondedPeripherals([])
+BleManager.getBondedPeripherals()
   .then((bondedPeripheralsArray) => {
     // Each peripheral in returned array will have id and name properties
     console.log('Bonded peripherals: ' + bondedPeripheralsArray.length);
