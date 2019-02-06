@@ -658,6 +658,11 @@ RCT_EXPORT_METHOD(enableBluetoothAsAdmin:(nonnull RCTResponseSenderBlock)callbac
     callback(@[@"Not supported"]);
 }
 
+RCT_EXPORT_METHOD(disableBluetoothAsAdmin:(nonnull RCTResponseSenderBlock)callback)
+{
+    callback(@[@"Not supported"]);
+}
+
 RCT_EXPORT_METHOD(getBondedPeripherals:(nonnull RCTResponseSenderBlock)callback)
 {
     callback(@[@"Not supported"]);

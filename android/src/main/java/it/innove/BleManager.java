@@ -157,6 +157,21 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 	}
 
 	@ReactMethod
+	public void disableBluetoothAsAdmin(Callback callback) {
+		if (getBluetoothAdapter() == null) {
+			Log.d(LOG_TAG, "No bluetooth support");
+			callback.invoke("No bluetooth support");
+			return;
+		}
+		if (getBluetoothAdapter().isEnabled()) {
+			getBluetoothAdapter().disable();
+			callback.invoke();
+		} else {
+			callback.invoke();
+		}
+	}
+
+	@ReactMethod
 	public void scan(ReadableArray serviceUUIDs, final int scanSeconds, boolean allowDuplicates, ReadableMap options,
 			Callback callback) {
 		Log.d(LOG_TAG, "scan");
