@@ -56,6 +56,9 @@ export function enableBluetooth(): Promise<void>;
 // Android only
 export function enableBluetoothAsAdmin(): Promise<void>;
 
+// Android only
+export function disableBluetoothAsAdmin(): Promise<void>;
+
 export function checkState(): void;
 
 export function startNotification(peripheralId: string, serviceUUID: string, characteristicUUID: string): Promise<void>;

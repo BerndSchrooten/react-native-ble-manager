@@ -301,6 +301,18 @@ class BleManager {
     });
   }
 
+  disableBluetoothAsAdmin() {
+    return new Promise((fulfill, reject) => {
+      bleManager.disableBluetoothAsAdmin(error => {
+        if (error != null) {
+          reject(error);
+        } else {
+          fulfill();
+        }
+      });
+    });
+  }
+
   getConnectedPeripherals(serviceUUIDs) {
     return new Promise((fulfill, reject) => {
       bleManager.getConnectedPeripherals(serviceUUIDs, (error, result) => {
